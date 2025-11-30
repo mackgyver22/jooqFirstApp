@@ -395,3 +395,4 @@ This is a template project - use it however you like!
 ## 🤝 Contributing
 
 Feel free to customize this template for your needs!
+# jooqFirstApp
