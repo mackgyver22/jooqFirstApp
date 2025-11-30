@@ -47,10 +47,26 @@ CREATE TABLE IF NOT EXISTS items (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- User Profile table
+CREATE TABLE IF NOT EXISTS user_profile (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT UNIQUE NOT NULL,
+    bio TEXT,
+    avatar_url VARCHAR(500),
+    phone VARCHAR(20),
+    date_of_birth DATE,
+    country VARCHAR(100),
+    city VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_items_user_id ON items(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_profile_user_id ON user_profile(user_id);
 
 -- Create a function to automatically update the updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -66,4 +82,7 @@ CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_items_updated_at BEFORE UPDATE ON items
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_user_profile_updated_at BEFORE UPDATE ON user_profile
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

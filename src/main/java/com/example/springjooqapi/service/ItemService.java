@@ -18,54 +18,27 @@ public class ItemService {
     private DSLContext dsl;
 
     public ItemResponse createItem(Long userId, ItemRequest request) {
-        var record = dsl.insertInto(ITEMS)
+        return dsl.insertInto(ITEMS)
                 .set(ITEMS.NAME, request.getName())
                 .set(ITEMS.DESCRIPTION, request.getDescription())
                 .set(ITEMS.USER_ID, userId)
                 .returning()
-                .fetchOne();
-
-        return new ItemResponse(
-                record.getId(),
-                record.getName(),
-                record.getDescription(),
-                record.getUserId(),
-                record.getCreatedAt(),
-                record.getUpdatedAt()
-        );
+                .fetchOne()
+                .into(ItemResponse.class);
     }
 
     public List<ItemResponse> getAllItemsForUser(Long userId) {
         return dsl.selectFrom(ITEMS)
                 .where(ITEMS.USER_ID.eq(userId))
-                .fetch()
-                .map(record -> new ItemResponse(
-                        record.getId(),
-                        record.getName(),
-                        record.getDescription(),
-                        record.getUserId(),
-                        record.getCreatedAt(),
-                        record.getUpdatedAt()
-                ));
+                .fetchInto(ItemResponse.class);
     }
 
     public Optional<ItemResponse> getItemById(Long itemId, Long userId) {
-        var record = dsl.selectFrom(ITEMS)
-                .where(ITEMS.ID.eq(itemId).and(ITEMS.USER_ID.eq(userId)))
-                .fetchOne();
-
-        if (record == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new ItemResponse(
-                record.getId(),
-                record.getName(),
-                record.getDescription(),
-                record.getUserId(),
-                record.getCreatedAt(),
-                record.getUpdatedAt()
-        ));
+        return Optional.ofNullable(
+                dsl.selectFrom(ITEMS)
+                        .where(ITEMS.ID.eq(itemId).and(ITEMS.USER_ID.eq(userId)))
+                        .fetchOne()
+        ).map(record -> record.into(ItemResponse.class));
     }
 
     public Optional<ItemResponse> updateItem(Long itemId, Long userId, ItemRequest request) {

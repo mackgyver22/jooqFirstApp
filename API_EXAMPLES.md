@@ -5,6 +5,7 @@ This file contains example API requests you can use to test the application.
 ## Environment Setup
 
 First, set your base URL:
+
 ```bash
 export API_URL=http://localhost:8080
 ```
@@ -35,11 +36,13 @@ curl -X POST ${API_URL}/api/auth/login \
 ```
 
 Save the token from the response:
+
 ```bash
 export TOKEN="<paste-token-here>"
 ```
 
 Or extract automatically (requires jq):
+
 ```bash
 export TOKEN=$(curl -s -X POST ${API_URL}/api/auth/login \
   -H "Content-Type: application/json" \
@@ -142,6 +145,7 @@ curl -X DELETE ${API_URL}/api/items/1 \
 ## Testing Error Cases
 
 ### Invalid Login
+
 ```bash
 curl -X POST ${API_URL}/api/auth/login \
   -H "Content-Type: application/json" \
@@ -152,17 +156,20 @@ curl -X POST ${API_URL}/api/auth/login \
 ```
 
 ### Access Protected Endpoint Without Token
+
 ```bash
 curl -X GET ${API_URL}/api/test/protected
 ```
 
 ### Access Protected Endpoint With Invalid Token
+
 ```bash
 curl -X GET ${API_URL}/api/test/protected \
   -H "Authorization: Bearer invalid-token-here"
 ```
 
 ### Create Item Without Required Fields
+
 ```bash
 curl -X POST ${API_URL}/api/items \
   -H "Authorization: Bearer ${TOKEN}" \
@@ -173,6 +180,7 @@ curl -X POST ${API_URL}/api/items \
 ```
 
 ### Register With Duplicate Username
+
 ```bash
 # Try to register the same username again
 curl -X POST ${API_URL}/api/auth/register \
