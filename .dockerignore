@@ -1,0 +1,15 @@
+.git/
+.gitignore
+.idea/
+.vscode/
+*.iml
+*.log
+.DS_Store
+README.md
+.env
+docker-compose.yml
+src/
+pom.xml
+setup.sh
+stop.sh
+API_EXAMPLES.md

@@ -1,0 +1,2 @@
+# This directory will contain auto-generated jOOQ classes
+# Run: mvn jooq-codegen:generate (after PostgreSQL is running)

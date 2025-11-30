@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: api-postgres
+    environment:
+      POSTGRES_DB: apidb
+      POSTGRES_USER: apiuser
+      POSTGRES_PASSWORD: apipassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./src/main/resources/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - api-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U apiuser -d apidb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/apidb
+      SPRING_DATASOURCE_USERNAME: apiuser
+      SPRING_DATASOURCE_PASSWORD: apipassword
+      JWT_SECRET: M6smqzMNuWrubXdgonxcFPICOOhcr7F6M5f5qUOBr3h5JC5fJk31NZxc23h3HmcHuEL+MdY9AHWGkCtpNpHpZg==
+      JWT_EXPIRATION: 86400000
+    ports:
+      - "8080:8080"
+    networks:
+      - api-network
+
+networks:
+  api-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
